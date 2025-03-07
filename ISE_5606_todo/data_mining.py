@@ -169,7 +169,7 @@ else:
     print(f"列 {old_column_name} 不存在于文件中，无法进行更改。")
 #%%
 # 定义新文件的路径
-new_file_path = '../Data/original data.csv'
+new_file_path = '../Data/Original_Data.csv'
 
 # 将修改后的数据保存为新的 CSV 文件
 df.to_csv(new_file_path, index=False)
