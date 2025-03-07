@@ -139,7 +139,7 @@ new_file_path = '../tim_DataMining/new5.csv'
 df.to_csv(new_file_path, index=False)
 
 print(f"修改后的数据已保存到 {new_file_path}")
-df = pd.read_csv('../../fangjia/new5.csv')
+df = pd.read_csv('/Users/tianyuheng/PycharmProjects/ISE5606/tim_DataMining/new5.csv')
 df.head
 #%%
 # 要更改的旧列名
@@ -157,7 +157,7 @@ old_column_name = '均价'
 # 新的列名
 new_column_name = '均价/平方米每元'
 #%%
-file_path = '../../fangjia/new5.csv'  # 检查旧列名是否存在
+file_path = '../tim_DataMining/new5.csv'  # 检查旧列名是否存在
 
 if old_column_name in df.columns:
     # 使用 rename 方法更改列名
@@ -169,11 +169,10 @@ else:
     print(f"列 {old_column_name} 不存在于文件中，无法进行更改。")
 #%%
 # 定义新文件的路径
-new_file_path = '/Data/original data.csv'
+new_file_path = '/Users/tianyuheng/PycharmProjects/ISE5606/Data/original data.csv'
 
 # 将修改后的数据保存为新的 CSV 文件
 df.to_csv(new_file_path, index=False)
 
 print(f"修改后的数据已保存到 {new_file_path}")
-#
 
