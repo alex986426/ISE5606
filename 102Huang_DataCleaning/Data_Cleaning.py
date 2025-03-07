@@ -9,7 +9,7 @@ warnings.filterwarnings('ignore')
 plt.rcParams['font.family'] = 'SimHei'
 
 # 导入数据 查看基本信息
-filename = '/Users/alexlee/文件/ISE5606/ISE5606/103Huang_DataCleaning/Original_Data.csv'
+filename = '/Users/alexlee/文件/ISE5606/ISE5606/102Huang_DataCleaning/Original_Data.csv'
 data = pd.read_csv(filename, encoding='utf-8')
 data.info()
 print('初始数据规模：', data.shape)
