@@ -1,7 +1,7 @@
 import  pandas as pd
 import  numpy as np
 
-df = pd.read_csv('../tim_DataMining/new1.csv')
+df = pd.read_csv('../102tim_DataMining/new1.csv')
 df.head
 
 # 定义新的列名列表，确保新列名数量和原列名数量一致
@@ -38,7 +38,7 @@ df = df.assign(室厅数=df[columns_to_merge].apply(lambda row: ', '.join(row.dr
 print(df)
 #%%
 # 定义新文件的路径
-new_file_path = '../tim_DataMining/new2.csv'
+new_file_path = '../102tim_DataMining/new2.csv'
 
 # 将修改后的数据保存为新的 CSV 文件
 df.to_csv(new_file_path, index=False)
@@ -105,13 +105,13 @@ df.columns = new_column_names
 print(df)
 #%%
 # 定义新文件的路径
-new_file_path = '../tim_DataMining/new3.csv'
+new_file_path = '../102tim_DataMining/new3.csv'
 
 # 将修改后的数据保存为新的 CSV 文件
 df.to_csv(new_file_path, index=False)
 
 print(f"修改后的数据已保存到 {new_file_path}")
-df = pd.read_csv('../tim_DataMining/new3.csv')
+df = pd.read_csv('../102tim_DataMining/new3.csv')
 df.head
 
 column_to_delete = '平方米每元/单位'
@@ -133,13 +133,13 @@ df = df[new_column_order]
 print(df)
 #%%
 # 定义新文件的路径
-new_file_path = '../tim_DataMining/new5.csv'
+new_file_path = '../102tim_DataMining/new5.csv'
 
 # 将修改后的数据保存为新的 CSV 文件
 df.to_csv(new_file_path, index=False)
 
 print(f"修改后的数据已保存到 {new_file_path}")
-df = pd.read_csv('../tim_DataMining/new5.csv')
+df = pd.read_csv('../102tim_DataMining/new5.csv')
 df.head
 #%%
 # 要更改的旧列名
@@ -157,7 +157,7 @@ old_column_name = '均价'
 # 新的列名
 new_column_name = '均价/平方米每元'
 #%%
-file_path = '../tim_DataMining/new5.csv'  # 检查旧列名是否存在
+file_path = '../102tim_DataMining/new5.csv'  # 检查旧列名是否存在
 
 if old_column_name in df.columns:
     # 使用 rename 方法更改列名
@@ -169,7 +169,7 @@ else:
     print(f"列 {old_column_name} 不存在于文件中，无法进行更改。")
 #%%
 # 定义新文件的路径
-new_file_path = '../Data/Original_Data.csv'
+new_file_path = '../002Data/Original_Data.csv'
 
 # 将修改后的数据保存为新的 CSV 文件
 df.to_csv(new_file_path, index=False)

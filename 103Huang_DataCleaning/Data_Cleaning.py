@@ -9,7 +9,7 @@ warnings.filterwarnings('ignore')
 plt.rcParams['font.family'] = 'SimHei'
 
 # 导入数据 查看基本信息
-filename = '/Users/alexlee/文件/ISE5606/ISE5606/Huang_DataCleaning/Original_Data.csv'
+filename = '/Users/alexlee/文件/ISE5606/ISE5606/103Huang_DataCleaning/Original_Data.csv'
 data = pd.read_csv(filename, encoding='utf-8')
 data.info()
 print('初始数据规模：', data.shape)
@@ -167,7 +167,7 @@ data.info()
 print(data.sample(5))
 
 # ALex:将清洗后的数据保存为CSV文件
-output_filename = '/Users/alexlee/文件/ISE5606/ISE5606/Data/Cleaned_Data.csv'
+output_filename = '/Users/alexlee/文件/ISE5606/ISE5606/002Data/Cleaned_Data.csv'
 data.to_csv(output_filename, index=False, encoding='utf-8')
 print(f"清洗后的数据已保存到 {output_filename}")
 
