@@ -2,9 +2,6 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
-from matplotlib.font_manager import FontProperties, findfont
-from wordcloud import WordCloud
-from collections import Counter
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
@@ -13,113 +10,20 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.metrics import MeanSquaredError
-import re
 
-import warnings
-warnings.filterwarnings('ignore')
-plt.rcParams['font.family'] = 'SimHei'
+# 设置图片清晰度
+plt.rcParams['figure.dpi'] = 300
 
-# 导入数据文件 数据预览
-filename = 'C:/Users/12521/PycharmProjects/pythonProject1/final_data.csv'
-data = pd.read_csv(filename, encoding='utf-8')
-data.info()
-print('___________')
-print(data.sample(5))
-print('___________1')
-# 修改列名
-data = data[['标题', '地区', '具体位置', '类型', '均价/平方米每元', '室厅数', '面积', '标签', '总价']]
-# 数据清洗
-print(data.isnull().sum())
-print('___________')
-summary = {
-    '标题': [data['标题'].nunique()],
-    '类型': list(data['类型'].unique()),
-    '具体位置': [data['具体位置'].nunique()],
-    '地区': list(data['地区'].unique()),
-    '室厅数': list(data['室厅数'].unique()),
-}
-df = pd.DataFrame.from_dict(summary, orient='index').T
-df = df.fillna('')
-print(df)
-print('___________2')
+# 设置中文字体
+plt.rcParams['font.sans-serif'] = ['WenQuanYi Zen Hei']
 
-# 缺失值用0填充
-data['均价/平方米每元'] = data['均价/平方米每元'].replace('价格待定', 0)
-
-# 中位数填充
-data['均价/平方米每元'] = data['均价/平方米每元'].astype(float)
-medians = data['均价/平方米每元'].median()
-data['均价/平方米每元'] = data['均价/平方米每元'].replace(0, medians)
-
-# 众数填充
-data['室厅数'].value_counts()
-data['室厅数'].fillna('3室,4室', inplace=True)
-
-# 提取小区标签并统计出现次数
-tags = data['标签'].str.split(',').explode()
-tag_counts = Counter(tags)
-print(tag_counts)
-print('___________')
-
-# 查找可用的中文字体文件路径
-try:
-    font_path = findfont(FontProperties(family='SimHei'))
-except:
-    # 如果找不到 SimHei 字体，尝试其他字体
-    font_path = findfont(FontProperties())
-
-# 生成词云图
-wordcloud = WordCloud(font_path=font_path, background_color='white', width=800, height=400).generate_from_frequencies(tag_counts)
-plt.figure(figsize=(12, 6))
-plt.imshow(wordcloud, interpolation='bilinear')
-plt.axis('off')
-plt.title('小区标签词云图')
-plt.show()
-
-# 提取总价列中的数值
-def extract_price(row):
-    match = re.findall(r'\d+', row)
-    if match:
-        prices = [int(num) for num in match]
-        return np.mean(prices)
-    else:
-        return np.nan
-
-data['总价数值'] = data['总价'].apply(extract_price)
-data = data.dropna(subset=['总价数值'])
-
-# 通过以上的描述分析可知【均价，总价，面积】呈现偏态分布
-# 进行对数变换
-data['对数均价/平方米每元'] = np.log(data['均价/平方米每元'])
-data['对数总价'] = np.log(data['总价数值'])
-# 面积列也需要先转换为数值类型
-data['面积数值'] = data['面积'].str.extract(r'(\d+\.?\d*)').astype(float)
-data['对数面积'] = np.log(data['面积数值'])
-
-plt.figure(figsize=(10, 8))
-
-plt.subplot(2, 2, 1)
-plt.hist(data['对数均价/平方米每元'])
-plt.title('均价分布')
-
-plt.subplot(2, 2, 2)
-plt.hist(data['室厅数'])
-plt.title('室厅数分布')
-
-plt.subplot(2, 2, 3)
-plt.hist(data['对数面积'])
-plt.title('面积分布')
-
-print(data.sample())
-print('___________')
-
-# 对室厅数进行独热编码
-room_hall_encoded = pd.get_dummies(data['室厅数'], prefix='室厅数')
-data = pd.concat([data, room_hall_encoded], axis=1)
-data.drop('室厅数', axis=1, inplace=True)
+# 加载数据
+data = pd.read_csv('../002Data/preprocessing data.csv')  # 替换为你的数据文件路径
 
 # 定义特征和目标变量
-X = data[['对数均价/平方米每元', '对数面积'] + list(room_hall_encoded.columns)]
+# 这里根据你实际的列名进行修改
+X = data[['对数面积', '是否是人车分流', '是否是车位充足', '是否是品牌房企', '是否是绿化率高',
+          '是否是低总价', '是否是国央企', '是否是佛山楼盘', '是否是低单价']]
 Y_total_price = data['对数总价']
 Y_avg_price = data['对数均价/平方米每元']
 
@@ -131,6 +35,7 @@ X_train, X_test, Y_total_train, Y_total_test, Y_avg_train, Y_avg_test = train_te
 scaler = MinMaxScaler()
 X_train_scaled = scaler.fit_transform(X_train)
 X_test_scaled = scaler.transform(X_test)
+
 
 # 人工神经网络模型
 model_ann = Sequential([
@@ -164,13 +69,16 @@ print('r2:', r2_avg_ann)
 
 # 随机森林模型
 model_rf = RandomForestRegressor(n_estimators=50, random_state=42)
+
+# 总价预测
 model_rf.fit(X_train, Y_total_train)
 y_total_pred_rf = model_rf.predict(X_test)
 mae_total_rf = mean_absolute_error(Y_total_test, y_total_pred_rf)
 mse_total_rf = mean_squared_error(Y_total_test, y_total_pred_rf)
 r2_total_rf = r2_score(Y_total_test, y_total_pred_rf)
 
-model_rf.fit(X_train, Y_avg_train)
+# 均价预测
+model_rf.fit(X_train, Y_avg_train)  # 这里使用 Y_avg_train 而不是 Y_avg_test
 y_avg_pred_rf = model_rf.predict(X_test)
 mae_avg_rf = mean_absolute_error(Y_avg_test, y_avg_pred_rf)
 mse_avg_rf = mean_squared_error(Y_avg_test, y_avg_pred_rf)
@@ -208,6 +116,7 @@ print('mae:', mae_avg_dt)
 print('mse:', mse_avg_dt)
 print('r2:', r2_avg_dt)
 
+
 # 梯度提升树模型
 model_gb = GradientBoostingRegressor(n_estimators=100, learning_rate=0.1, random_state=42)
 model_gb.fit(X_train, Y_total_train)
@@ -230,3 +139,8 @@ print('梯度提升树模型（均价预测）:')
 print('mae:', mae_avg_gb)
 print('mse:', mse_avg_gb)
 print('r2:', r2_avg_gb)
+
+from sklearn.model_selection import cross_val_score
+
+cv_scores = cross_val_score(model_rf, X, Y_total_price, cv=5, scoring='r2')
+print("交叉验证平均 $R^2$ 值:", cv_scores.mean())
